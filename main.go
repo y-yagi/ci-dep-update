@@ -64,7 +64,10 @@ func appRun(c *cli.Context) error {
 
 	user := c.String("user")
 	repo := c.String("repository")
-	email := user + "@users.noreply.github.com"
+	email := c.String("email")
+	if len(email) == 0 {
+		email = user + "@users.noreply.github.com"
+	}
 	branch := "dep-update-" + time.Now().Format("2006-01-02-150405")
 
 	createBranchAndCommit(user, email, token, repo, branch)
@@ -89,6 +92,12 @@ func commandFlags() []cli.Flag {
 			Value:  "",
 			Usage:  "Git user name",
 			EnvVar: "GIT_USER_NAME",
+		},
+		cli.StringFlag{
+			Name:   "email, e",
+			Value:  "",
+			Usage:  "Git user email",
+			EnvVar: "GIT_USER_EMAIL",
 		},
 		cli.StringFlag{
 			Name:   "repository, r",
