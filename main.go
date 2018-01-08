@@ -130,12 +130,14 @@ func runDepUpdate() error {
 }
 
 func createBranchAndCommit(username, useremail, token, repo, branch string) {
+	remote := "https://" + token + "@github.com/" + repo
+	exec.Command("git", "remote", "add", "github-url-with-token", remote).Run()
 	exec.Command("git", "checkout", "-b", branch).Run()
 	exec.Command("git", "config", "user.name", username).Run()
 	exec.Command("git", "config", "user.email", useremail).Run()
 	exec.Command("git", "add", "Gopkg.lock").Run()
 	exec.Command("git", "commit", "-m", "Run 'dep ensure -update'").Run()
-	exec.Command("git", "push", "-u", "-q", "origin", branch).Run()
+	exec.Command("git", "push", "-q", "github-url-with-token", branch).Run()
 }
 
 func isNeedUpdate() (bool, error) {
