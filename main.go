@@ -94,7 +94,7 @@ func commandFlags() []cli.Flag {
 			Name:   "repository, r",
 			Value:  "",
 			Usage:  "Repository url",
-			EnvVar: "REPOSITORY_URL,CIRCLE_REPOSITORY_URL",
+			EnvVar: "REPOSITORY_URL",
 		},
 	}
 }
