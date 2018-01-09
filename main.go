@@ -150,9 +150,9 @@ func isNeedUpdate() (bool, error) {
 	return result, nil
 }
 
-func gitHubClient(access_token string, ctx *context.Context) *github.Client {
+func gitHubClient(accessToken string, ctx *context.Context) *github.Client {
 	ts := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: access_token},
+		&oauth2.Token{AccessToken: accessToken},
 	)
 	tc := oauth2.NewClient(*ctx, ts)
 	return github.NewClient(tc)
