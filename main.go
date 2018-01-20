@@ -194,7 +194,6 @@ func generateDiffLink(prj *gps.LockedProjectDiff) string {
 	if strings.Contains(name, "github.com") {
 		compareLink = fmt.Sprintf("[%s...%s](https://%s/compare/%s...%s)", prj.Revision.Previous[:7], prj.Revision.Current[:7], prj.Name, prj.Revision.Previous, prj.Revision.Current)
 		return fmt.Sprintf("* [%s](https://%s) %s\n", prj.Name, prj.Name, compareLink)
-	} else {
-		return fmt.Sprintf("* [%s](https://%s) %s...%s\n", prj.Name, prj.Name, prj.Revision.Previous[:7], prj.Revision.Current[:7])
 	}
+	return fmt.Sprintf("* [%s](https://%s) %s...%s\n", prj.Name, prj.Name, prj.Revision.Previous[:7], prj.Revision.Current[:7])
 }
