@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/golang/dep/gps"
 	"github.com/google/go-github/github"
 	"github.com/pkg/errors"
 	"github.com/urfave/cli"
@@ -46,6 +47,8 @@ func appRun(c *cli.Context) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
+	beforeLock, _ := readLock("Gopkg.lock")
+
 	if err = runDepUpdate(); err != nil {
 		return cli.NewExitError(err.Error(), 1)
 	}
@@ -69,10 +72,11 @@ func appRun(c *cli.Context) error {
 		email = user + "@users.noreply.github.com"
 	}
 	branch := "dep-update-" + time.Now().Format("2006-01-02-150405")
+	afterLock, _ := readLock("Gopkg.lock")
+	lockDiff := gps.DiffLocks(beforeLock, afterLock)
 
 	createBranchAndCommit(user, email, token, repo, branch)
-
-	if err = createPullRequest(&ctx, client, repo, branch); err != nil {
+	if err = createPullRequest(&ctx, client, lockDiff, repo, branch); err != nil {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
@@ -158,16 +162,39 @@ func gitHubClient(accessToken string, ctx *context.Context) *github.Client {
 	return github.NewClient(tc)
 }
 
-func createPullRequest(ctx *context.Context, client *github.Client, repo, branch string) error {
+func createPullRequest(ctx *context.Context, client *github.Client, lockDiff *gps.LockDiff, repo, branch string) error {
 	title := github.String("Dep update at " + time.Now().Format("2006-01-02 15:04:05"))
+	body := github.String(generatePullRequestBody(lockDiff))
 	base := github.String("master")
 	ownerAndRepo := strings.Split(repo, "/")
 	head := github.String(ownerAndRepo[0] + ":" + branch)
-	pr := &github.NewPullRequest{Title: title, Head: head, Base: base}
+	pr := &github.NewPullRequest{Title: title, Head: head, Base: base, Body: body}
 
 	_, _, err := client.PullRequests.Create(*ctx, ownerAndRepo[0], ownerAndRepo[1], pr)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func generatePullRequestBody(diff *gps.LockDiff) string {
+	result := "**Changed:**\n\n"
+	for _, prj := range diff.Modify {
+		result += generateDiffLink(&prj)
+	}
+
+	return result
+}
+
+func generateDiffLink(prj *gps.LockedProjectDiff) string {
+	var compareLink string
+	name := string(prj.Name)
+
+	// TODO: check Version
+	if strings.Contains(name, "github.com") {
+		compareLink = fmt.Sprintf("[%s...%s](https://%s/compare/%s...%s)", prj.Revision.Previous[:7], prj.Revision.Current[:7], prj.Name, prj.Revision.Previous, prj.Revision.Current)
+		return fmt.Sprintf("* [%s](https://%s) %s\n", prj.Name, prj.Name, compareLink)
+	} else {
+		return fmt.Sprintf("* [%s](https://%s) %s...%s\n", prj.Name, prj.Name, prj.Revision.Previous[:7], prj.Revision.Current[:7])
+	}
 }
