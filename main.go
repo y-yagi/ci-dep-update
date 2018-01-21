@@ -188,7 +188,11 @@ func generatePullRequestBody(diff *gps.LockDiff) string {
 
 func generateDiffLink(prj *gps.LockedProjectDiff) string {
 	var compareLink string
+	var pkg string
+	var url string
 	name := string(prj.Name)
+	golangOrg := "golang.org/x/"
+	golangOrgLen := len(golangOrg)
 
 	prev := prj.Revision.Previous[:7]
 	cur := prj.Revision.Current[:7]
@@ -199,8 +203,12 @@ func generateDiffLink(prj *gps.LockedProjectDiff) string {
 	}
 
 	if strings.Contains(name, "github.com") {
-		compareLink = fmt.Sprintf("[%s...%s](https://%s/compare/%s...%s)", prev, cur, prj.Name, prev, cur)
-		return fmt.Sprintf("* [%s](https://%s) %s\n", prj.Name, prj.Name, compareLink)
+		compareLink = fmt.Sprintf("[%s...%s](https://%s/compare/%s...%s)", prev, cur, name, prev, cur)
+		return fmt.Sprintf("* [%s](https://%s) %s\n", name, name, compareLink)
+	} else if name[:golangOrgLen] == golangOrg {
+		pkg = name[golangOrgLen:]
+		url = "https://github.com/golang/" + pkg
+		return fmt.Sprintf("* [%s](%s) [%s...%s](%s/compare/%s...%s)\n", name, url, prev, cur, url, prev, cur)
 	}
 	return fmt.Sprintf("* [%s](https://%s) %s...%s\n", prj.Name, prj.Name, prev, cur)
 }
