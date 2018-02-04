@@ -14,15 +14,18 @@ import (
 	"golang.org/x/oauth2"
 )
 
+// DepUpdater is a struct fo update.
 type DepUpdater struct {
 	cli *cli.Context
 }
 
+// NewDepUpdater creates a new updater.
 func NewDepUpdater(cli *cli.Context) *DepUpdater {
 	updater := &DepUpdater{cli: cli}
 	return updater
 }
 
+// Run update.
 func (updater *DepUpdater) Run() error {
 	var result bool
 
@@ -59,11 +62,8 @@ func (updater *DepUpdater) Run() error {
 	lockDiff := gps.DiffLocks(beforeLock, afterLock)
 
 	updater.createBranchAndCommit(user, email, token, repo, branch)
-	if err = updater.createPullRequest(&ctx, client, lockDiff, repo, branch); err != nil {
-		return err
-	}
 
-	return nil
+	return updater.createPullRequest(&ctx, client, lockDiff, repo, branch)
 }
 
 func (updater *DepUpdater) runDepUpdate() error {
