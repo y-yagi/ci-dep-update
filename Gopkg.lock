@@ -79,16 +79,25 @@
   version = "v0.3.0"
 
 [[projects]]
+  name = "github.com/kisielk/gotool"
+  packages = [
+    ".",
+    "internal/load"
+  ]
+  revision = "80517062f582ea3340cd4baf70e86d539ae7d84d"
+  version = "v1.0.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/nightlyone/lockfile"
   packages = ["."]
   revision = "6a197d5ea61168f2ac821de2b7f011b250904900"
 
 [[projects]]
+  branch = "master"
   name = "github.com/pelletier/go-toml"
   packages = ["."]
-  revision = "acdc4509485b587f5e675510c4f2c63e90ff68a8"
-  version = "v1.1.0"
+  revision = "603baefff989777996bf283da430d693e78eba3a"
 
 [[projects]]
   name = "github.com/pkg/errors"
@@ -142,8 +151,11 @@
   branch = "master"
   name = "golang.org/x/tools"
   packages = [
+    "go/ast/astutil",
+    "go/buildutil",
     "go/gcexportdata",
     "go/gcimporter15",
+    "go/loader",
     "go/types/typeutil"
   ]
   revision = "8cab8a1319f0be9798e7fe78b15da75e5f94b2e9"
@@ -162,9 +174,31 @@
   revision = "150dc57a1b433e64154302bdc40b6bb8aefa313a"
   version = "v1.0.0"
 
+[[projects]]
+  name = "honnef.co/go/tools"
+  packages = [
+    "callgraph",
+    "callgraph/static",
+    "cmd/megacheck",
+    "deprecated",
+    "functions",
+    "internal/sharedcheck",
+    "lint",
+    "lint/lintutil",
+    "simple",
+    "ssa",
+    "ssa/ssautil",
+    "staticcheck",
+    "staticcheck/vrp",
+    "unused",
+    "version"
+  ]
+  revision = "d73ab98e7c39fdcf9ba65062e43d34310f198353"
+  version = "2017.2.2"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "0e1124211646e03e2cd7f49b59928f421c7ebc8f8e5a2ac6aef2909eb8af14d1"
+  inputs-digest = "74e6f0826181615364a6604f3d42aa30a6f47271452548c615e7e1adb154ea1c"
   solver-name = "gps-cdcl"
   solver-version = 1
