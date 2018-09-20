@@ -84,33 +84,14 @@ func (updater *DepUpdater) isNeedUpdate() (bool, error) {
 }
 
 func (updater *DepUpdater) createBranchAndCommit(username, useremail, token, repo, branch string) {
-	var output []byte
 	remote := "https://" + token + "@github.com/" + repo
-
-	output, _ = exec.Command("git", "remote", "add", "github-url-with-token", remote).Output()
-	fmt.Printf("git remote add: %v\n", string(output))
-
-	output, _ = exec.Command("git", "config", "user.name", username).Output()
-	fmt.Printf("git config: %v\n", string(output))
-
-	output, _ = exec.Command("git", "config", "user.email", useremail).Output()
-	fmt.Printf("git config: %v\n", string(output))
-
-	output, _ = exec.Command("git", "add", "Gopkg.lock").Output()
-	fmt.Printf("git add : %v\n", string(output))
-
-	output, _ = exec.Command("git", "commit", "-m", "Run 'dep ensure -update'").Output()
-	fmt.Printf("git commit : %v\n", string(output))
-
-	output, _ = exec.Command("git", "branch", "-M", branch).Output()
-	fmt.Printf("git branch: %v\n", string(output))
-
-	output, _ = exec.Command("git", "push", "-q", "github-url-with-token", branch).Output()
-	fmt.Printf("git push: %v\n", string(output))
-
-	output, _ = exec.Command("git", "branch").Output()
-	fmt.Printf("git branch: %v\n", string(output))
-
+	exec.Command("git", "remote", "add", "github-url-with-token", remote).Run()
+	exec.Command("git", "config", "user.name", username).Run()
+	exec.Command("git", "config", "user.email", useremail).Run()
+	exec.Command("git", "add", "Gopkg.lock").Run()
+	exec.Command("git", "commit", "-m", "Run 'dep ensure -update'").Run()
+	exec.Command("git", "branch", "-M", branch).Run()
+	exec.Command("git", "push", "-q", "github-url-with-token", branch).Run()
 }
 
 func (updater *DepUpdater) gitHubClient(accessToken string, ctx *context.Context) *github.Client {
