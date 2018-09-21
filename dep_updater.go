@@ -111,10 +111,7 @@ func (updater *DepUpdater) createPullRequest(ctx *context.Context, client *githu
 	pr := &github.NewPullRequest{Title: title, Head: head, Base: base, Body: body}
 
 	_, _, err := client.PullRequests.Create(*ctx, ownerAndRepo[0], ownerAndRepo[1], pr)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 func (updater *DepUpdater) generatePullRequestBody(diff *gps.LockDiff) string {
